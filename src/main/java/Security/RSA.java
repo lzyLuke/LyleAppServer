@@ -13,7 +13,7 @@ package Security;
 	import java.util.Map;
 
 	public class RSA {
-
+		/*
 	    public static final String CHARSET = "UTF-8";
 	    public static final String RSA_ALGORITHM = "RSA";
 
@@ -33,6 +33,7 @@ package Security;
 	        KeyPair keyPair = kpg.generateKeyPair();
 	        //得到公钥
 	        Key publicKey = keyPair.getPublic();
+	        
 	        String publicKeyStr = Base64.getUrlEncoder().encodeToString(publicKey.getEncoded());
 	        //得到私钥
 	        Key privateKey = keyPair.getPrivate();
@@ -44,11 +45,7 @@ package Security;
 	        return keyPairMap;
 	    }
 
-	    /**
-	     * 得到公钥
-	     * @param publicKey 密钥字符串（经过base64编码）
-	     * @throws Exception
-	     */
+
 	    public static RSAPublicKey getPublicKey(String publicKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
 	        //通过X509编码的Key指令获得公钥对象
 	        KeyFactory keyFactory = KeyFactory.getInstance(RSA_ALGORITHM);
@@ -65,11 +62,7 @@ package Security;
 	    public static String decode(String str,String privateKey) throws Exception {
 	    		return 	privateDecrypt(str, RSA.getPrivateKey(privateKey));
 	    }
-	    /**
-	     * 得到私钥
-	     * @param privateKey 密钥字符串（经过base64编码）
-	     * @throws Exception
-	     */
+
 	    public static RSAPrivateKey getPrivateKey(String privateKey) throws NoSuchAlgorithmException, InvalidKeySpecException {
 	        //通过PKCS#8编码的Key指令获得私钥对象
 	        KeyFactory keyFactory = KeyFactory.getInstance(RSA_ALGORITHM);
@@ -78,12 +71,7 @@ package Security;
 	        return key;
 	    }
 
-	    /**
-	     * 公钥加密
-	     * @param data
-	     * @param publicKey
-	     * @return
-	     */
+
 	    public static String publicEncrypt(String data, RSAPublicKey publicKey){
 	        try{
 	            Cipher cipher = Cipher.getInstance(RSA_ALGORITHM);
@@ -94,46 +82,31 @@ package Security;
 	        }
 	    }
 
-	    /**
-	     * 私钥解密
-	     * @param data
-	     * @param privateKey
-	     * @return
-	     */
 
 	    public static String privateDecrypt(String data, RSAPrivateKey privateKey){
 	        try{
 	            Cipher cipher = Cipher.getInstance(RSA_ALGORITHM);
 	            cipher.init(Cipher.DECRYPT_MODE, privateKey);
+	           
 	            return new String(rsaSplitCodec(cipher, Cipher.DECRYPT_MODE, Base64.getUrlDecoder().decode(data), privateKey.getModulus().bitLength()), CHARSET);
 	        }catch(Exception e){
 	            throw new RuntimeException("解密字符串[" + data + "]时遇到异常", e);
 	        }
 	    }
 
-	    /**
-	     * 私钥加密
-	     * @param data
-	     * @param privateKey
-	     * @return
-	     */
+
 
 	    public static String privateEncrypt(String data, RSAPrivateKey privateKey){
 	        try{
 	            Cipher cipher = Cipher.getInstance(RSA_ALGORITHM);
 	            cipher.init(Cipher.ENCRYPT_MODE, privateKey);
+	            
 	            return Base64.getUrlEncoder().encodeToString(rsaSplitCodec(cipher, Cipher.ENCRYPT_MODE, data.getBytes(CHARSET), privateKey.getModulus().bitLength()));
 	        }catch(Exception e){
 	            throw new RuntimeException("加密字符串[" + data + "]时遇到异常", e);
 	        }
 	    }
 
-	    /**
-	     * 公钥解密
-	     * @param data
-	     * @param publicKey
-	     * @return
-	     */
 
 	    public static String publicDecrypt(String data, RSAPublicKey publicKey){
 	        try{
@@ -180,30 +153,30 @@ package Security;
 	    
 	    public static void main (String[] args) throws Exception {
 	        Map<String, String> keyMap = RSA.createKeys(1024);
-	        String  publicKey = keyMap.get("publicKey");
-	        String  privateKey = keyMap.get("privateKey");
-	        System.out.println("公钥: \n\r" + publicKey);
-	        System.out.println("私钥： \n\r" + privateKey);
+	        //String  publicKey = keyMap.get("publicKey");
+	        //String  privateKey = keyMap.get("privateKey");
+	        //System.out.println("公钥: \n\r" + publicKey);
+	        //System.out.println("私钥： \n\r" + privateKey);
 
+	        String pubkey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCBXMpCAdCmt1-jvgisJHQPdAgqFRg0uZhR8ed5cAcDhB37k-RDr0_cZupF4nflxfqFERPD-d5bA3pJe5N7wSvwpCxHJdoYf05HKj7p35eJzQxhKS_QBro2OSxtgGiGJ1oS0qB8Kg313uF2e4lfRfkqlIxL_TCZtqdX0ui0UNR57wIDAQAB";
+	        String prikey = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAIFcykIB0Ka3X6O-CKwkdA90CCoVGDS5mFHx53lwBwOEHfuT5EOvT9xm6kXid-XF-oURE8P53lsDekl7k3vBK_CkLEcl2hh_TkcqPunfl4nNDGEpL9AGujY5LG2AaIYnWhLSoHwqDfXe4XZ7iV9F-SqUjEv9MJm2p1fS6LRQ1HnvAgMBAAECgYB_NwIMMX7ARLq_6wTaTKr5-3B_-eipCQ87Hro02S98jLNzkTe8PC48H9UpTpH8G1rG-0lFw3agaGYc13LtE8Wh4lgitpOUnNFkhd2yPRYxKDC4t2uDUFmyOK9ZN0zlX47PWAlcRSdPmWNFTsA2fr11drkntm3tPjobnaEUPA4OqQJBANE3vStUyPPs1Kmunx2qOzTn-ZZGCju3qHT9afmx8a1SRvlXrInLnFoXYHbELCMplBCmL9yjvDBqyZ_tBMPyCZMCQQCeSeRWe36tG6bNYDmOGdFY8zTECR8rpuUANVBgYLEdLFUVJUh21eExLCvNPeZlAbUfrveMpz3ZFPlJ9Yyhepe1AkAhA_DAM8L6azcsB7hoUALD2I-UXT0kK1lUDOF6W9BNj5xPoLxDinQD64h3dYGZkuggsHkBEn2SDmf-6sJDwaAtAkA3luvCE4zhbpyd8_VCmn6TJpaZYjq4Mdyqvg6ESnDpNfCLhJR2Z5a2ljSr19laD8d0YRY_J1zpKByEhN_mtg8hAkEAgX7K-mrmnLmR2YOxMaXxNLluoyIKUiM7D8HekAQA9pfKQMDkVRLpYjsGZViXS3Ol80Na_1LAqcuXT1eUTIkGGg==";
+	        String encod ="HJ7WlL-oaZON8ArIp0kIGzB5QdXUQyI0L4U6yCD7bDeyhPpPzaI7C_5z9NDmMKwAGM6JGpwgiak1uWP5bGQjzEiP1Y3yD_RFRRlWuowcpLdgf_wnqHB29uZQ39kLVLu5WrMHTE1-TpHmePApGkVlhuQtFnc9DlElTy87d1ARZvc=";
 	        System.out.println("公钥加密——私钥解密");
-	        String str = "站在大明门前守卫的禁卫军，事先没有接到\n" +
-	                "有关的命令，但看到大批盛装的官员来临，也就\n" +
-	                "以为确系举行大典，因而未加询问。进大明门即\n" +
-	                "为皇城。文武百官看到端门午门之前气氛平静，\n" +
-	                "城楼上下也无朝会的迹象，既无几案，站队点名\n" +
-	                "的御史和御前侍卫“大汉将军”也不见踪影，不免\n" +
-	                "心中揣测，互相询问：所谓午朝是否讹传？";
+	        String str = "abc";
 	        System.out.println("\r明文：\r\n" + str);
 	        System.out.println("\r明文大小：\r\n" + str.getBytes().length);
 	        //String encodedData = RSA.publicEncrypt(str, RSA.getPublicKey(publicKey));
-	        String encodedData = RSA.encode(str,publicKey);
+	        String encodedData = RSA.encode(str,pubkey);
 	        System.out.println("密文：\r\n" + encodedData);
 	        //String decodedData = RSA.privateDecrypt(encodedData, RSA.getPrivateKey(privateKey));
-	        String decodedData = RSA.decode(encodedData,privateKey);
+	        String decodedData = RSA.decode(encodedData,prikey);
 	        System.out.println("解密后文字: \r\n" + decodedData);
 
 
 	    }
-	    
+	    */
+		
+		
+	
 }
 

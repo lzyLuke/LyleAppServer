@@ -16,6 +16,7 @@ import com.google.gson.Gson;
 
 import Security.AES;
 import Security.RSA;
+import Security.RSAUtil;
 public class ClientTest {
 	String mainURL;
 	String realAES;
@@ -25,12 +26,12 @@ public class ClientTest {
 	Gson gson = new Gson();
 	public static void main(String[] args) {
 		try {
-		ClientTest test = new ClientTest("http://localhost:8080");
-		//test.firstConnect();
-		//test.register();
-		test.uploadMomentPicture();
-		test.uploadCoverPicture();
-		test.uploadAvatarPicture();
+		ClientTest test = new ClientTest("http://47.106.14.199:8080");
+		test.firstConnect();
+		//test.login();
+		//test.uploadMomentPicture();
+		//test.uploadCoverPicture();
+		//test.uploadAvatarPicture();
 		//test.freshMoments();
 		}
 		catch(Exception e) {
@@ -40,11 +41,11 @@ public class ClientTest {
 	
 	public ClientTest(String url) {
 		mainURL=url;
-		Map<String, String> keyMap = RSA.createKeys(1024);
-        publicKey = keyMap.get("publicKey");
-        privateKey = keyMap.get("privateKey");
-        System.out.println("公钥: \n\r" + publicKey);
-        System.out.println("私钥： \n\r" + privateKey);
+		String[] keys = RSAUtil.generateRSAKeyPairStringArray();
+        publicKey = keys[0];
+        privateKey = keys[1];
+        System.out.println("Public: \n\r" + publicKey);
+        System.out.println("Private： \n\r" + privateKey);
         
         
         
