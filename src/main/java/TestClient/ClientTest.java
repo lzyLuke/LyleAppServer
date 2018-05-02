@@ -26,9 +26,24 @@ public class ClientTest {
 	Gson gson = new Gson();
 	public static void main(String[] args) {
 		try {
-		ClientTest test = new ClientTest("http://47.106.14.199:8080");
-		test.firstConnect();
+		ClientTest test = new ClientTest("http://localhost:8080");
+		//test.firstConnect();
+		//test.register();
 		//test.login();
+		
+		/*
+		test.getNotice();
+		test.visit(1, 1);
+		test.getNotice();
+		test.visit(1,2);
+		test.getNotice();
+		*/
+		
+		//test.getALLMomentsByUserID(1);
+		//test.getSingleMomentByMomentID(1);
+		test.postComment();
+		
+		
 		//test.uploadMomentPicture();
 		//test.uploadCoverPicture();
 		//test.uploadAvatarPicture();
@@ -67,7 +82,7 @@ public class ClientTest {
 		if (connection.getResponseCode() == 200) {
 			firstReply rbundle;
 			rbundle = gson.fromJson(r, firstReply.class);
-			realAES = RSA.decode(rbundle.encryptedAESkey, privateKey);
+			realAES = RSAUtil.decode(rbundle.encryptedAESkey, privateKey);
 			System.out.println("realAES:"+realAES);
 			sessionid=rbundle.sessionid;
 			System.out.println("sessionid:"+String.valueOf(sessionid));
@@ -91,7 +106,7 @@ public class ClientTest {
 		
 		// transfer into Json and put it into a stream.
 		PrintWriter w = new PrintWriter(connection.getOutputStream());
-		LoginIn postBundle = new LoginIn("LukeAccount", AES.Encrypt("123456", realAES));
+		LoginIn postBundle = new LoginIn("wdy666", AES.Encrypt("asd123", realAES));
 		System.out.println("Post内容：");
 		System.out.println(postBundle);
 		System.out.println("=========================");
@@ -124,7 +139,7 @@ public class ClientTest {
 		
 		// transfer into Json and put it into a stream.
 		PrintWriter w = new PrintWriter(connection.getOutputStream());
-		RegisterRequest postBundle = new RegisterRequest("NEWSIGNIN", AES.Encrypt("123456", realAES),"alibaba");
+		RegisterRequest postBundle = new RegisterRequest("mageji", AES.Encrypt("123456", realAES),"马格吉");
 		System.out.println("Post内容：");
 		System.out.println(gson.toJson(postBundle, RegisterRequest.class));
 		System.out.println("=========================");
@@ -190,7 +205,7 @@ public class ClientTest {
 		// transfer into Json and put it into a stream.
 		PrintWriter w = new PrintWriter(connection.getOutputStream());
 		PostComment postBundle = new PostComment(
-				2,"Luke",1,"略略略","2015-02-02 03-03-00"
+				1,"luke",2,"略略略","2018-02-02 03-03-00",1,2,"mary"
 				);
 		
 		System.out.println("Post内容：");
@@ -423,6 +438,104 @@ public class ClientTest {
 		}
 		else {
 		System.out.println("上传动态图片失败");
+		}
+	}
+	
+	
+	/////////newly added
+	//获得提醒消息
+	public void getNotice() throws Exception{
+		int userID = 1;
+		URL url = new URL(mainURL + "/notice?sessionID="+String.valueOf(sessionid)+"&userID="+String.valueOf(userID));
+
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		connection.setRequestProperty("Content-Type", "application/json");
+		System.out.println("正在尝试获取消息提醒更新。。。GET\n" + url);
+		
+		
+		try {
+		if (connection.getResponseCode() == 200) {
+			Notices rbundle;
+			BufferedReader r = new BufferedReader(new
+			InputStreamReader(connection.getInputStream()));
+			rbundle = gson.fromJson(r, Notices.class);
+	
+			System.out.println(gson.toJson(rbundle, Notices.class));
+			
+			
+		} else {
+			System.out.println("服务器拒绝!!!!!");
+		}
+		}catch(Exception e) {
+			System.out.println("获取更新失败");
+		}
+		
+	}
+	public void visit(int userID,int momentID) throws Exception {
+		//int userID = 1;
+		//int momentID = 1;
+		URL url = new URL(mainURL + "/visit?sessionID="+String.valueOf(sessionid)+"&userID="+String.valueOf(userID)+"&momentID="+String.valueOf(momentID));
+
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		connection.setRequestProperty("Content-Type", "application/json");
+		System.out.println("正在尝试获取消息提醒更新。。。GET\n" + url);
+		
+		
+		try {
+		if (connection.getResponseCode() == 200) {
+			System.out.println("Success visit");
+		} else {
+			System.out.println("服务器拒绝!!!!!");
+		}
+		}catch(Exception e) {
+			System.out.println("获取更新失败");
+		}
+		
+	}
+	
+	public void getSingleMomentByMomentID(int momentID) throws Exception {
+		URL url = new URL(mainURL + "/getSingleMomentByMomentId?sessionID="+String.valueOf(sessionid)+"&momentID="+String.valueOf(momentID));
+
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		connection.setRequestProperty("Content-Type", "application/json");
+		System.out.println("正在尝试获取通过MomentID获取一个Moment。。。\n" + url);
+		
+		
+		try {
+		if (connection.getResponseCode() == 200) {
+			Moments rbundle;
+			BufferedReader r = new BufferedReader(new
+			InputStreamReader(connection.getInputStream()));
+			rbundle = gson.fromJson(r, Moments.class);
+			System.out.println(gson.toJson(rbundle, Moments.class));
+		} else {
+			System.out.println("服务器拒绝!!!!!");
+		}
+		}catch(Exception e) {
+			System.out.println("获取更新失败");
+		}
+	}
+	
+	public void getALLMomentsByUserID(int userid) throws Exception {
+		URL url = new URL(mainURL + "/getAllMomentsByUserid?sessionID="+String.valueOf(sessionid)+"&userID="+String.valueOf(userid));
+
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		connection.setRequestProperty("Content-Type", "application/json");
+		System.out.println("正在尝试获取一个用户的所有Moment。。。GET\n" + url);
+		
+		
+		try {
+		if (connection.getResponseCode() == 200) {
+			Moments rbundle;
+			BufferedReader r = new BufferedReader(new
+			InputStreamReader(connection.getInputStream()));
+			rbundle = gson.fromJson(r, Moments.class);
+			System.out.println(gson.toJson(rbundle, Moments.class));
+		} else {
+			System.out.println("服务器拒绝!!!!!");
+		}
+		}catch(Exception e) {
+			System.out.println("获取更新失败");
 		}
 	}
 	public void dumpResponse(BufferedReader r) throws Exception {

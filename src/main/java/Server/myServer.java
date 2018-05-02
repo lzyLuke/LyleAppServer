@@ -246,7 +246,6 @@ public class myServer {
 			prefix = request.contentType().substring(6);
 			int sessionID = Integer.parseInt( request.queryParams("sessionID") );
 			System.out.println("接收到上传图片请求。。。");
-			request.bodyAsBytes();
 		
 				byte[] bt = request.bodyAsBytes();
 				uuid = UUID.randomUUID().toString().replace("-", "");
@@ -269,17 +268,21 @@ public class myServer {
 			
 		},gson::toJson);
 		
-		/*
-		get("/moment:name", (request, response) -> {
-			
+		
+
+		// 8080?sessionid=xx&userid=xxx
+		get("/notice", (request, response) -> {
+			Notices ans;
 			try {
-			String filename = request.params(":name");
-			File newfile = new File("src/main/resources/public/moment"+filename);
 			response.header("Content-Type", "application/json");
-			//String prefix = request.contentType().substring(6);
-			System.out.println("接收到获取服务器图片请求。。。");
-			response.
-	      
+			int sessionID = Integer.parseInt( request.queryParams("sessionID") );
+			int userid = Integer.parseInt( request.queryParams("userID") );
+		
+			System.out.println("Receiv Notice request. USERID = " + String.valueOf(userid));
+			
+			ans = handleNotice.handle(userid);
+			
+			System.out.println(gson.toJson(ans,Notices.class));
 			response.status(200);
 			}catch(Exception e) {
 				e.printStackTrace();
@@ -287,12 +290,85 @@ public class myServer {
 				response.header("Content-Type", "application/json");
 				return "Fail";
 			}
-			return response.raw();
+			return ans; 
 			
-		});
-		*/
+		},gson::toJson);
 		
+		// 8080?sessionid=xx&userid=xxx&momentid=xxx
+				get("/visit", (request, response) -> {
+					boolean ans;
+					try {
+					response.header("Content-Type", "application/json");
+					int sessionID = Integer.parseInt( request.queryParams("sessionID") );
+					int userid = Integer.parseInt( request.queryParams("userID") );
+					int momentid = Integer.parseInt( request.queryParams("momentID") );
+					System.out.println("Receiv Visit request. USERID = " + String.valueOf(userid)+" MOMENTID = "+String.valueOf(momentid));
+					
+					ans = handleVisit.handle(momentid,userid);
+					if(ans)
+					response.status(200);
+					else
+					response.status(403);
+					
+					}catch(Exception e) {
+						e.printStackTrace();
+						response.status(403);
+						response.header("Content-Type", "application/json");
+						return "Fail";
+					}
+					
+					
+					return ans; 
+					
+				},gson::toJson);
 		
+				get("/getAllMomentsByUserid", (request, response) -> {
+					Moments ans;
+					try {
+					response.header("Content-Type", "application/json");
+					int sessionID = Integer.parseInt( request.queryParams("sessionID") );
+					int userid = Integer.parseInt( request.queryParams("userID") );
+					System.out.println("Receiv GET ALL MOMENTS BY USER ID request. USERID = " + String.valueOf(userid));
+					
+					ans = handleGetMomentsByUserID.handle(userid);
+					
+					response.status(200);
+					
+					}catch(Exception e) {
+						e.printStackTrace();
+						response.status(403);
+						response.header("Content-Type", "application/json");
+						return "Fail";
+					}
+					
+					
+					return ans; 
+					
+				},gson::toJson);
+				
+				get("/getSingleMomentByMomentId", (request, response) -> {
+					Moments ans;
+					try {
+					response.header("Content-Type", "application/json");
+					int sessionID = Integer.parseInt( request.queryParams("sessionID") );
+					int momentid = Integer.parseInt( request.queryParams("momentID") );
+					System.out.println("Receiv GET SINGLE MOMENTS BY MOMENT ID request. MOMENTID = " + String.valueOf(momentid));
+					
+					ans = handleGetSingleMomentByMomentID.handle(momentid);
+					
+					response.status(200);
+					
+					}catch(Exception e) {
+						e.printStackTrace();
+						response.status(403);
+						response.header("Content-Type", "application/json");
+						return "Fail";
+					}
+					
+					
+					return ans; 
+					
+				},gson::toJson);
 	}
 		
 		

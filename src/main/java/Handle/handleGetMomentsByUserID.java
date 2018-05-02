@@ -9,20 +9,16 @@ import java.util.LinkedList;
 import DataBase.DB;
 import Reply.Moments;
 import Reply.SingleMoment;
-import Reply.UserInfo;
-import Request.MomentFreshQuery;
 
-public class handleFreshMoment {
-	public static Moments handle(MomentFreshQuery q) {
+public class handleGetMomentsByUserID {
+	public static Moments handle(int userID) {
 		Moments moments = new Moments();
 		moments.contents=new LinkedList<SingleMoment>();
 		try {
 		Connection conn = DB.getConn();
-		int nums=4;
-		PreparedStatement pst = conn.prepareStatement("SELECT * FROM Lyle.moments WHERE datetime < ? AND location = ? ORDER BY datetime DESC LIMIT ? ");
-		pst.setString(1, q.latestupdate);
-		pst.setString(2, q.location);
-		pst.setInt(3, nums);
+		PreparedStatement pst = conn.prepareStatement("SELECT * FROM Lyle.moments WHERE userid = ? ORDER BY datetime DESC ");
+		pst.setInt(1, userID);
+		
 		
 		ResultSet rs=pst.executeQuery();
 		
@@ -43,5 +39,7 @@ public class handleFreshMoment {
 		}
 		
 		return moments;
+		
+		
 	}
 }

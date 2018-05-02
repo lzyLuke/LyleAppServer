@@ -25,8 +25,11 @@ public class handleFreshComment {
 			int authorid = rs.getInt("authorid");
 			String nickname =rs.getString("nickname");
 			String content = rs.getString("content");
-			
-			SingleComment newCommnet = new SingleComment(authorid,nickname,momentid,content);
+			int momentauthorid = rs.getInt("momentauthorid");
+			int receiverid = rs.getInt("receiverid");
+			String receivernickname = rs.getString("receivernickname");
+			String datetime = rs.getString("datetime");
+			SingleComment newCommnet = new SingleComment(  authorid, nickname,  momentid, content,datetime,receiverid,receivernickname,momentauthorid);
 			comments.contents.add(newCommnet);
 		}
 		}catch(Exception e) {
