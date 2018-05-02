@@ -26,7 +26,7 @@ public class ClientTest {
 	Gson gson = new Gson();
 	public static void main(String[] args) {
 		try {
-		ClientTest test = new ClientTest("http://localhost:8080");
+		ClientTest test = new ClientTest("http://47.106.14.199:8080");
 		//test.firstConnect();
 		//test.register();
 		//test.login();
@@ -38,10 +38,10 @@ public class ClientTest {
 		test.visit(1,2);
 		test.getNotice();
 		*/
-		
+		test.getNotice();
 		//test.getALLMomentsByUserID(1);
 		//test.getSingleMomentByMomentID(1);
-		test.postComment();
+		//test.postComment();
 		
 		
 		//test.uploadMomentPicture();
